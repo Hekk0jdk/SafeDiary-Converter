@@ -1,0 +1,7 @@
+{
+	"fileVersion": 1,
+	"versions": {
+		"arsd-official": "12.1.2",
+		"d2sqlite3": "1.0.0"
+	}
+}

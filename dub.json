@@ -1,0 +1,13 @@
+{
+	"authors": [
+		"kurumi"
+	],
+	"copyright": "Copyright © 2026, kurumi",
+	"dependencies": {
+		"arsd-official:htmltotext": "~>12.1.2",
+		"d2sqlite3": "~>1.0.0"
+	},
+	"description": "Convert safe-diary backups to plain text",
+	"license": "GPL-3.0-or-later",
+	"name": "convert"
+}
