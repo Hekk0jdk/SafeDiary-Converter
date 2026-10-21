@@ -17,7 +17,7 @@ immutable string[] mood = [
 ];
 
 
-class Data
+struct Data
 {
 private:
     CachedResults dates, moods, texts, tags;

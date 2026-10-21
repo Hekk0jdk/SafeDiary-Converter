@@ -8,12 +8,12 @@ private enum string datef = "%d.%02d.%02d-%02d:%02d:%02d";
 private struct Date {
     int y, m, d, h, mn, s;
 
-    string as_str() {
+    pure string as_str() {
         return format(datef, y, m, d, h, mn, s);
     }
 }
 
-string unix_to_datetime(long unixt, byte timeshift)
+pure string unix_to_datetime(long unixt, byte timeshift)
 {
     Date date;
 
