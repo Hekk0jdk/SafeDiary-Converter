@@ -44,14 +44,14 @@ public:
     void parse_data()
     {
         auto db = Database(tmp_file);
-        dates = db.execute("SELECT date FROM diary_entries").cached;
-        moods = db.execute("SELECT mood FROM diary_entries").cached;
-        texts = db.execute("SELECT text FROM diary_entries_text").cached;
-        tags = db.execute("SELECT tags FROM diary_entries_text").cached;
+        dates = db.execute("SELECT date FROM diary_entries ORDER BY id").cached;
+        moods = db.execute("SELECT mood FROM diary_entries ORDER BY id").cached;
+        texts = db.execute("SELECT c0text FROM diary_entries_text_content ORDER BY docid").cached;
+        tags = db.execute("SELECT c1tags FROM diary_entries_text_content ORDER BY docid").cached;
         len = dates.length;
     }
 
-    void write_to_file()
+    void write_to_file(byte timezone)
     {
         import std.path : buildPath;
 
@@ -59,7 +59,8 @@ public:
             mkdir(dir_name);
 
         for (int i = 0; i < len; i++) {
-            string note_name = unix_to_datetime(dates[i][0].as!long, 4);
+            if (i > 3) break; // For tests
+            string note_name = unix_to_datetime(dates[i][0].as!long, timezone);
             string content = format_data(i);
 
             auto path = buildPath(dir_name, note_name);
@@ -72,19 +73,22 @@ void extract_database(string backup_path)
 {
     auto zip = new ZipArchive(read(backup_path));
     foreach (am; zip.directory) {
-
-        auto buf = zip.expand(am);
-        write(tmp_file, buf);
+        if (am.name == "diary_database"){
+            auto buf = zip.expand(am);
+            write(tmp_file, buf);
+        }
     }
 }
 
 void main(string[] args)
 {
     string backup_path;
+    byte tz;
 
     auto info = getopt(
         args,
-        "file|f", "backup path", &backup_path,
+        "file|f",       "backup path",         &backup_path,
+        "timezone|t",  "UTC offset in hour",  &tz,
     );
 
     if (info.helpWanted || !backup_path) {
@@ -99,10 +103,9 @@ void main(string[] args)
     }
 
     extract_database(backup_path);
+    scope(exit) if (exists(tmp_file)) remove(tmp_file);
 
     auto d = new Data;
     d.parse_data();
-    d.write_to_file();
-
-    remove(tmp_file);
+    d.write_to_file(tz);
 }

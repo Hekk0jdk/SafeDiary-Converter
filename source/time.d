@@ -3,17 +3,17 @@ module time;
 import std.stdio : writeln;
 import std.format : format;
 
-private enum string datef = "%d.%02d.%02d-%02d:%02d:%02d";
+private enum string datef = "%d.%02d.%02d_%02d-%02d-%02d.txt";
 
 private struct Date {
     int y, m, d, h, mn, s;
 
-    pure string as_str() {
+    pure string as_str() const {
         return format(datef, y, m, d, h, mn, s);
     }
 }
 
-pure string unix_to_datetime(long unixt, byte timeshift)
+pure string unix_to_datetime(long unixt, byte timezone = 0)
 {
     Date date;
 
@@ -26,7 +26,7 @@ pure string unix_to_datetime(long unixt, byte timeshift)
     //
 
     unixt /= 1000;
-    unixt += timeshift * 3600;
+    unixt += timezone * 3600;
 
     seconds_day = unixt % 86_400;
     d = cast(int)(unixt / (24 * 60 * 60));
@@ -67,6 +67,6 @@ pure string unix_to_datetime(long unixt, byte timeshift)
 }
 
 unittest {
-    assert(unix_to_datetime(1_791_489_570_036, 4) == "2026.10.08-23:59:30");
-    assert(unix_to_datetime(1_720_806_033_337, -2) == "2024.07.12-15:40:33");
+    assert(unix_to_datetime(1_791_489_570_036, 4) == "2026.10.08_23-59-30.txt");
+    assert(unix_to_datetime(1_720_806_033_337, -2) == "2024.07.12_15-40-33.txt");
 }
