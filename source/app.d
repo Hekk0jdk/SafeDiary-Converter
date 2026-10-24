@@ -59,7 +59,7 @@ public:
             mkdir(dir_name);
 
         for (int i = 0; i < len; i++) {
-            if (i > 3) break; // For tests
+            // if (i > 3) break; // For tests
             string note_name = unix_to_datetime(dates[i][0].as!long, timezone);
             string content = format_data(i);
 
